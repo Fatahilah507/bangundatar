@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika: Gabungan Bangun Datar</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(137deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 750px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background-color: #1e3c72;
+            color: #ffffff;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .card {
+            padding: 30px;
+            display: none;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        /* Form Nama */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e3c72;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #2a5298;
+        }
+
+        /* Question Styles */
+        .question-number {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2a5298;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-btn:hover {
+            background-color: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+
+        .option-btn.selected {
+            background-color: #e0e7ff;
+            border-color: #4f46e5;
+            color: #3730a3;
+            font-weight: bold;
+        }
+
+        .btn {
+            background-color: #2a5298;
+            color: #ffffff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #1e3c72;
+        }
+
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Result Page */
+        .result-box {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .student-name {
+            font-size: 22px;
+            color: #1e3c72;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            font-size: 64px;
+            font-weight: 800;
+            color: #2a5298;
+            margin: 20px 0;
+        }
+
+        .score-status {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #e9ecef;
+            width: 100%;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #2a5298;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Kuis Matematika Interaktif</h1>
+        <p>Luas & Keliling Gabungan Bangun Datar (Gunakan π = 22/7)</p>
+    </div>
+
+    <div class="progress-bar" id="progressBarContainer" style="display: none;">
+        <div class="progress-fill" id="progressBar"></div>
+    </div>
+
+    <!-- Halaman Input Nama -->
+    <div class="card active" id="startCard">
+        <h2 style="margin-bottom: 20px; color: #1e3c72;">Selamat Datang!</h2>
+        <p style="margin-bottom: 20px; line-height: 1.5; color: #666;">
+            Sebelum memulai kuis, silakan masukkan nama lengkap Anda. Kuis ini terdiri dari 5 soal cerita mengenai luas dan keliling gabungan bangun datar.
+        </p>
+        <div class="form-group">
+            <label for="fullName">Nama Lengkap:</label>
+            <input type="text" id="fullName" placeholder="Masukkan nama lengkap Anda..." autocomplete="off">
+        </div>
+        <button class="btn" onclick="startQuiz()">Mulai Kuis</button>
+    </div>
+
+    <!-- Container Soal -->
+    <div class="card" id="quizCard">
+        <div class="question-number" id="qNum">Soal 1 dari 5</div>
+        <div class="question-text" id="qText">Teks soal...</div>
+        
+        <!-- Ilustrasi Gambar -->
+        <div class="diagram-container" id="diagramContainer">
+            <!-- SVG Diinjeksi via JS -->
+        </div>
+
+        <div class="options" id="optionsContainer">
+            <!-- Pilihan jawaban diinjeksi via JS -->
+        </div>
+        <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Lanjut</button>
+    </div>
+
+    <!-- Halaman Hasil Nilai -->
+    <div class="card" id="resultCard">
+        <div class="result-box">
+            <h3>Hasil Akhir Kuis</h3>
+            <div class="student-name" id="resultName">Nama Siswa</div>
+            <p>Nilai yang diperoleh:</p>
+            <div class="score-display" id="resultScore">0</div>
+            <div class="score-status" id="resultStatus">Keterangan hasil kuis</div>
+            <button class="btn" onclick="restartQuiz()">Ulangi Kuis</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            text: "Sebuah panggung terbuka dirancang berbentuk persegi panjang berukuran 21 m x 14 m. Di salah satu sisi lebarnya (14 m), terdapat tambahan area artis berbentuk setengah lingkaran yang menempel keluar. Berapa luas total lantai panggung terbuka tersebut?",
+            diagram: `<svg width="220" height="130" viewBox="0 0 220 130">
+                <rect x="20" y="25" width="120" height="80" fill="#cbd5e1" stroke="#1e293b" stroke-width="2"/>
+                <path d="M 140 25 A 40 40 0 0 1 140 105 Z" fill="#93c5fd" stroke="#1e293b" stroke-width="2"/>
+                <text x="80" y="70" font-size="12" text-anchor="middle" fill="#0f172a">21 m</text>
+                <text x="10" y="70" font-size="12" text-anchor="middle" fill="#0f172a">14 m</text>
+            </svg>`,
+            options: [
+                "A. 371 m²",
+                "B. 448 m²",
+                "C. 294 m²",
+                "D. 350 m²"
+            ],
+            answer: 0
+        },
+        {
+            text: "Pak Danu memiliki karpet berbentuk persegi dengan panjang sisi 28 cm. Di tengah karpet tersebut terdapat hiasan motif berbentuk lingkaran dengan diameter 14 cm. Berapa luas area karpet yang berada di luar hiasan motif lingkaran tersebut?",
+            diagram: `<svg width="150" height="150" viewBox="0 0 150 150">
+                <rect x="15" y="15" width="120" height="120" fill="#fde68a" stroke="#1e293b" stroke-width="2"/>
+                <circle cx="75" cy="75" r="30" fill="#f43f5e" stroke="#1e293b" stroke-width="2"/>
+                <text x="75" y="147" font-size="12" text-anchor="middle" fill="#0f172a">28 cm</text>
+                <line x1="45" y1="75" x2="105" y2="75" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="3,3"/>
+                <text x="75" y="71" font-size="10" text-anchor="middle" fill="#ffffff">d = 14 cm</text>
+            </svg>`,
+            options: [
+                "A. 630 cm²",
+                "B. 784 cm²",
+                "C. 620 cm²",
+                "D. 476 cm²"
+            ],
+            answer: 0
+        },
+        {
+            text: "Sebuah taman kota berbentuk persegi panjang berukuran 35 m x 20 m. Di kedua ujung sisi lebarnya (20 m), dibuat dua area kolam identik berbentuk setengah lingkaran yang menempel keluar (diameter kolam 20 m). Jika di sekeliling batas luar taman dipasang pagar dekoratif, berapa panjang pagar yang dibutuhkan?",
+            diagram: `<svg width="250" height="130" viewBox="0 0 250 130">
+                <path d="M 50 25 A 40 40 0 0 0 50 105 Z" fill="#bfdbfe" stroke="#1e293b" stroke-width="2"/>
+                <rect x="50" y="25" width="140" height="80" fill="#bbf7d0" stroke="#1e293b" stroke-width="2"/>
+                <path d="M 190 25 A 40 40 0 0 1 190 105 Z" fill="#bfdbfe" stroke="#1e293b" stroke-width="2"/>
+                <text x="120" y="70" font-size="12" text-anchor="middle" fill="#0f172a">35 m</text>
+                <text x="120" y="18" font-size="10" text-anchor="middle" fill="#0f172a">d = 20 m</text>
+            </svg>`,
+            options: [
+                "A. 133 meter",
+                "B. 110 meter",
+                "C. 154 meter",
+                "D. 120 meter"
+            ],
+            answer: 0
+        },
+        {
+            text: "Seorang pengrajin membuat papan nama meja berbentuk persegi dengan panjang sisi 14 cm. Di atas sisi bagian atas papan tersebut, ditambahkan hiasan berbentuk setengah lingkaran dengan diameter sama dengan sisi persegi (14 cm). Pengrajin ingin memasang pita hias di sekeliling pinggir luar papan nama tersebut. Berapa panjang pita yang dibutuhkan?",
+            diagram: `<svg width="150" height="170" viewBox="0 0 150 170">
+                <path d="M 35 65 A 40 40 0 0 1 115 65 Z" fill="#fef08a" stroke="#1e293b" stroke-width="2"/>
+                <rect x="35" y="65" width="80" height="80" fill="#fed7aa" stroke="#1e293b" stroke-width="2"/>
+                <text x="75" y="160" font-size="12" text-anchor="middle" fill="#0f172a">14 cm</text>
+            </svg>`,
+            options: [
+                "A. 64 cm",
+                "B. 72 cm",
+                "C. 86 cm",
+                "D. 50 cm"
+            ],
+            answer: 0
+        },
+        {
+            text: "Sebuah area parkir kendaraan terdiri dari gabungan persegi panjang berukuran 10 m x 7 m dan sebuah area tambahan berbentuk setengah lingkaran dengan diameter 7 m pada salah satu sisi lebarnya. Berapa luas total area parkir tersebut?",
+            diagram: `<svg width="220" height="130" viewBox="0 0 220 130">
+                <rect x="30" y="30" width="110" height="60" fill="#cbd5e1" stroke="#1e293b" stroke-width="2"/>
+                <path d="M 140 30 A 30 30 0 0 1 140 90 Z" fill="#94a3b8" stroke="#1e293b" stroke-width="2"/>
+                <text x="85" y="65" font-size="12" text-anchor="middle" fill="#0f172a">10 m</text>
+                <text x="18" y="65" font-size="11" text-anchor="middle" fill="#0f172a">7 m</text>
+            </svg>`,
+            options: [
+                "A. 89,25 m²",
+                "B. 70 m²",
+                "C. 108,5 m²",
+                "D. 95 m²"
+            ],
+            answer: 0
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswer = null;
+    let userAnswers = [];
+    let studentName = "";
+
+    function startQuiz() {
+        const nameInput = document.getElementById('fullName').value.trim();
+        if (nameInput === "") {
+            alert("Silakan masukkan nama lengkap terlebih dahulu.");
+            return;
+        }
+        studentName = nameInput;
+
+        document.getElementById('startCard').classList.remove('active');
+        document.getElementById('quizCard').classList.add('active');
+        document.getElementById('progressBarContainer').style.display = 'block';
+
+        currentQuestionIndex = 0;
+        userAnswers = [];
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const q = questions[currentQuestionIndex];
+        document.getElementById('qNum').innerText = `Soal ${currentQuestionIndex + 1} dari ${questions.length}`;
+        document.getElementById('qText').innerText = q.text;
+        document.getElementById('diagramContainer').innerHTML = q.diagram;
+
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = "";
+        selectedAnswer = null;
+
+        const nextBtn = document.getElementById('nextBtn');
+        nextBtn.disabled = true;
+        nextBtn.innerText = (currentQuestionIndex === questions.length - 1) ? "Selesai" : "Lanjut";
+
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(index, btn);
+            optionsContainer.appendChild(btn);
+        });
+
+        updateProgressBar();
+    }
+
+    function selectOption(index, element) {
+        selectedAnswer = index;
+        const allOptions = document.querySelectorAll('.option-btn');
+        allOptions.forEach(btn => btn.classList.remove('selected'));
+        element.classList.add('selected');
+        document.getElementById('nextBtn').disabled = false;
+    }
+
+    function nextQuestion() {
+        if (selectedAnswer !== null) {
+            userAnswers.push(selectedAnswer);
+        }
+
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function updateProgressBar() {
+        const progress = ((currentQuestionIndex) / questions.length) * 100;
+        document.getElementById('progressBar').style.width = `${progress}%`;
+    }
+
+    function showResult() {
+        document.getElementById('quizCard').classList.remove('active');
+        document.getElementById('resultCard').classList.add('active');
+        document.getElementById('progressBarContainer').style.display = 'none';
+
+        let correctCount = 0;
+        userAnswers.forEach((ans, index) => {
+            if (ans === questions[index].answer) {
+                correctCount++;
+            }
+        });
+
+        const score = (correctCount / questions.length) * 100;
+
+        document.getElementById('resultName').innerText = studentName;
+        document.getElementById('resultScore').innerText = Math.round(score);
+
+        let statusText = "";
+        if (score === 100) {
+            statusText = "Sangat Luar Biasa! Semua soal berhasil dijawab dengan benar.";
+        } else if (score >= 80) {
+            statusText = "Bagus sekali! Pemahamanmu sudah sangat baik.";
+        } else if (score >= 60) {
+            statusText = "Cukup baik! Tingkatkan lagi latihannya.";
+        } else {
+            statusText = "Jangan berkecil hati, teruslah berlatih!";
+        }
+
+        document.getElementById('resultStatus').innerText = statusText;
+    }
+
+    function restartQuiz() {
+        document.getElementById('resultCard').classList.remove('active');
+        document.getElementById('startCard').classList.add('active');
+        document.getElementById('fullName').value = "";
+    }
+</script>
+
+</body>
+</html>
